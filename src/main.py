@@ -16,6 +16,7 @@ main_logger = setup_logging(
     use_colors=use_colors
 )
 
+
 # Cria as tabelas no banco de dados
 main_logger.info("Criando tabelas no banco de dados")
 event_model.Base.metadata.create_all(bind=engine)
