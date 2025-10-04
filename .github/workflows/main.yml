@@ -52,11 +52,11 @@ jobs:
               - name: Obtendo o código do projeto
                 uses: actions/checkout@v5
 
-              - name: Configurar contexto Kubernetes
-                uses: azure/k8s-set-context@v4
-                with:
-                  method: kubeconfig
-                  kubeconfig: ${{ secrets.KUBE_CONFIG }}  
+              - name: Configurar kubeconfig
+                run: |
+                  mkdir -p $HOME/.kube
+                  echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+                  chmod 600 $HOME/.kube/config
 
               - name: Criar namespace de staging
                 run: kubectl create namespace tech-staging --dry-run=client -o yaml | kubectl apply -f -
@@ -83,11 +83,11 @@ jobs:
               - name: Obtendo o código do projeto
                 uses: actions/checkout@v5
 
-              - name: Configurar contexto Kubernetes
-                uses: azure/k8s-set-context@v4
-                with:
-                  method: kubeconfig
-                  kubeconfig: ${{ secrets.KUBE_CONFIG }}
+              - name: Configurar kubeconfig
+                run: |
+                  mkdir -p $HOME/.kube
+                  echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+                  chmod 600 $HOME/.kube/config
 
               - name: Criar namespace de produção
                 run: kubectl create namespace tech-prod --dry-run=client -o yaml | kubectl apply -f -
