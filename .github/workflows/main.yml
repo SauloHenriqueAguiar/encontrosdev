@@ -1,9 +1,9 @@
 name: CI-CD
 
-  on:
-    push:
-      branches: [ "main" ]
-    workflow_dispatch:
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
       CI:
@@ -56,7 +56,7 @@ jobs:
                 uses: azure/k8s-set-context@v4
                 with:
                   method: kubeconfig
-                  kubeconfig: ${{ secrets.KUBE_CONFIG }}
+                  kubeconfig: ${{ secrets.KUBE_CONFIG }} 
 
               - name: Criar namespace de homologação
                 run: kubectl create namespace tech-homolog --dry-run=client -o yaml | kubectl apply -f -
