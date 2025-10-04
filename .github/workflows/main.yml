@@ -44,10 +44,10 @@ jobs:
                     saulohjr/encontros-tech:latest
                     saulohjr/encontros-tech:v${{ github.run_number }}                 
 
-      CD-Homolog:
+      CD-Staging:
           runs-on: ubuntu-latest
           needs: [CI]
-          environment: homologacao
+          environment: staging
           steps:
               - name: Obtendo o código do projeto
                 uses: actions/checkout@v5
@@ -58,26 +58,26 @@ jobs:
                   method: kubeconfig
                   kubeconfig: ${{ secrets.KUBE_CONFIG }}  
 
-              - name: Criar namespace de homologação
-                run: kubectl create namespace tech-homolog --dry-run=client -o yaml | kubectl apply -f -
+              - name: Criar namespace de staging
+                run: kubectl create namespace tech-staging --dry-run=client -o yaml | kubectl apply -f -
 
-              - name: Create secrets in homolog
+              - name: Create secrets in staging
                 run: |
                   kubectl create secret generic encontros-tech-db-secret \
                     --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-                    --namespace=tech-homolog \
+                    --namespace=tech-staging \
                     --dry-run=client -o yaml | kubectl apply -f -
 
-              - name: Deploy no ambiente de homologação
+              - name: Deploy no ambiente de staging
                 uses: azure/k8s-deploy@v5
                 with:
-                  namespace: 'tech-homolog'
+                  namespace: 'tech-staging'
                   manifests: |
                     k8s/deployment.yaml
 
       CD-Prod:
           runs-on: ubuntu-latest
-          needs: [CD-Homolog]
+          needs: [CD-Staging]
           environment: producao
           steps:
               - name: Obtendo o código do projeto
